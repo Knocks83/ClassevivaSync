@@ -31,7 +31,7 @@ unset($agenda, $startDate, $endDate);
 try {
     $googleCalendar = getEvents($calendarId, date('c'));
 } catch (\InvalidArgumentException $th) {
-    die('You forgot the client_secret.json file!');
+    die('You forgot the client secret file!'.PHP_EOL);
 }
 
 print($calendarId.PHP_EOL);

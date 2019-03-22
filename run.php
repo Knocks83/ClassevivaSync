@@ -34,9 +34,6 @@ try {
     die('You forgot the client secret file!'.PHP_EOL);
 }
 
-print($calendarId.PHP_EOL);
-print_r($googleCalendar);
-
 if (!empty($googleCalendar)) {
     foreach ($events as $event) {
         $name = $event->authorName.': '.$event->notes;

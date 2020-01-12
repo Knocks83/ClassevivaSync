@@ -53,7 +53,7 @@ php run.php
 
 ## Additional infos
 
-I remember you that the Classeviva APIs I used in this project are available [here](https://github.com/Knocks83/Classeviva-PHP-Api)
+I remind you that the Classeviva APIs I used in this project are available [here](https://github.com/Knocks83/Classeviva-PHP-Api)
 
 ---
 

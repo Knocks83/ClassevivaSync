@@ -1,8 +1,9 @@
 <?php
-class Classeviva {
+class Classeviva
+{
     private $baseUrl = 'https://web.spaggiari.eu/rest/v1';
 
-    private function Request ($dir, $data = [])
+    private function Request($dir, $data = [])
     {
         if ($data == []) {
             curl_setopt($this->curl, CURLOPT_POST, false);
@@ -11,16 +12,15 @@ class Classeviva {
                 CURLOPT_POST       => true,
                 CURLOPT_POSTFIELDS => $data,
             ]);
-            
         }
         curl_setopt_array($this->curl, [
-            CURLOPT_URL        => $this->baseUrl.$dir,
+            CURLOPT_URL        => $this->baseUrl . $dir,
         ]);
 
         return curl_exec($this->curl);
     }
 
-    public function __construct ($username, $password, $identity = null)
+    public function __construct($username, $password, $identity = null)
     {
         $this->ident = $identity;
         $this->username = $username;
@@ -43,16 +43,16 @@ class Classeviva {
         $this->login();
     }
 
-    public function login ()
+    public function login()
     {
         $json = "{
             \"ident\":\"$this->ident\",
             \"pass\":\"$this->password\",
             \"uid\":\"$this->username\"
         }";
-        $response = json_decode($this->Request('/auth/login',$json));
+        $response = json_decode($this->Request('/auth/login', $json));
 
-        if(!property_exists($response, 'error') && isset($response->token)) {
+        if (!property_exists($response, 'error') && isset($response->token)) {
             $this->ident = $response->ident;
             $this->firstName = $response->firstName;
             $this->lastName = $response->lastName;
@@ -62,11 +62,10 @@ class Classeviva {
                 'Content-Type: application/json',
                 'Z-Dev-Apikey: +zorro+',
                 'User-Agent: zorro/1.0',
-                'Z-Auth-Token: '.$this->token,
+                'Z-Auth-Token: ' . $this->token,
             ));
-
         } elseif (isset($response->error)) {
-            throw new Exception($response->error.PHP_EOL, 2);
+            throw new Exception($response->error . PHP_EOL, 2);
         } else throw new Exception("Unknown error", 2);
     }
 
@@ -95,10 +94,10 @@ class Classeviva {
             }
         } else {
             return $this->Request("/students/$this->id/absences/details");
-        } 
+        }
     }
 
-    public function agenda ($begin, $end, $events = 'all')
+    public function agenda($begin, $end, $events = 'all')
     {
         return $this->Request("/students/$this->id/agenda/$events/$begin/$end");
     }
@@ -116,23 +115,22 @@ class Classeviva {
     {
         // If mode == 1 read, else attach
         if ($mode != null) {
-            if($mode) {
+            if ($mode) {
                 return $this->Request("/students/$this->id/noticeboard/read/$eventCode/$pubID/101");
             } else {
                 return $this->Request("/students/$this->id/noticeboard/attach/$eventCode/$pubID/101");
             }
-            
         } else {
             return $this->Request("/students/$this->id/noticeboard");
         }
     }
 
-    public function schoolbooks ()
+    public function schoolbooks()
     {
         return $this->Request("/students/$this->id/schoolbooks");
     }
 
-    public function calendar ()
+    public function calendar()
     {
         return $this->Request("/students/$this->id/calendar/all");
     }
@@ -159,17 +157,17 @@ class Classeviva {
     public function lessons($start = null, $end = null)
     {
         if ($start != null) {
-            if($end != null) {
+            if ($end != null) {
                 return $this->Request("/students/$this->id/lessons/$start/$end");
             } else {
                 return $this->Request("/students/$this->id/lessons/$start");
             }
         } else {
             return $this->Request("/students/$this->id/lessons/today");
-        }        
+        }
     }
 
-    public function notes ()
+    public function notes()
     {
         return $this->Request("/students/$this->id/notes/all");
     }
@@ -190,9 +188,16 @@ class Classeviva {
         $classevivaEvents = array();
 
         foreach ($classevivaAgenda->agenda as $event) {
-            $convertedEvent = new ClassevivaEvent($event->evtId, $event->evtCode,
-                $event->evtDatetimeBegin, $event->evtDatetimeEnd, $event->notes,
-                $event->authorName, $event->classDesc, $event->subjectId, $event->subjectDesc
+            $convertedEvent = new ClassevivaEvent(
+                $event->evtId,
+                $event->evtCode,
+                $event->evtDatetimeBegin,
+                $event->evtDatetimeEnd,
+                $event->notes,
+                $event->authorName,
+                $event->classDesc,
+                $event->subjectId,
+                $event->subjectDesc
             );
 
             array_push($classevivaEvents, $convertedEvent);
@@ -200,15 +205,22 @@ class Classeviva {
 
         return $classevivaEvents;
     }
-    
 }
 
-class ClassevivaEvent  
+class ClassevivaEvent
 {
-    public function __construct(string $id, string $evtCode, string $evtDatetimeBegin,
-        string $evtDatetimeEnd, string $notes, string $authorName, string $classDesc,
-        $isFullDay = false, $subjectid = null, $subjectDesc = null)
-    {
+    public function __construct(
+        string $id,
+        string $evtCode,
+        string $evtDatetimeBegin,
+        string $evtDatetimeEnd,
+        string $notes,
+        string $authorName,
+        string $classDesc,
+        $isFullDay = false,
+        $subjectid = null,
+        $subjectDesc = null
+    ) {
         $this->id = $id;
         $this->evtCode = $evtCode;
         $this->evtDatetimeBegin = $evtDatetimeBegin;

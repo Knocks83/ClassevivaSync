@@ -21,7 +21,7 @@ function getClient()
     $client->setAccessType('offline');
     $client->setPrompt('select_account consent');
 
-    $tokenPath = dirname(__FILE__).'/token.json';
+    $tokenPath = dirname(__FILE__) . '/token.json';
     if (file_exists($tokenPath)) {
         $accessToken = json_decode(file_get_contents($tokenPath), true);
         $client->setAccessToken($accessToken);
@@ -66,15 +66,15 @@ function getEvents($calendarId, $timeMin)
     // Get the API client and construct the service object.
     $client = getClient();
     $service = new Google_Service_Calendar($client);
-    
+
     // Get the Calendar events
     $optParams = array(
-      'singleEvents' => false,   // Returns once the recurring events
-      'timeMin' => $timeMin,   // Doesn't get the events before today
+        'singleEvents' => false,   // Returns once the recurring events
+        'timeMin' => $timeMin,   // Doesn't get the events before today
     );
     $results = $service->events->listEvents($calendarId, $optParams);
     $events = $results->getItems();
-    
+
     if (empty($events)) {
         return null;
     } else {
@@ -84,13 +84,13 @@ function getEvents($calendarId, $timeMin)
         }
         return ($evt_sum);
     }
-    
 }
 
 /**
  * Adds a event in the calendar
  */
-function addEvent($calendarId, $summary, $start_date, $end_date){
+function addEvent($calendarId, $summary, $start_date, $end_date)
+{
     $client = getClient();
     $service = new Google_Service_Calendar($client);
 
@@ -99,18 +99,18 @@ function addEvent($calendarId, $summary, $start_date, $end_date){
         'location' => '',
         'description' => '',
         'start' => array(
-          'dateTime' => $start_date,
+            'dateTime' => $start_date,
         ),
         'end' => array(
-          'dateTime' => $end_date,
+            'dateTime' => $end_date,
         ),
         'reminders' => array(
-          'useDefault' => FALSE,
-          'overrides' => array(
-            array('method' => 'popup', 'minutes' => 24*60),
-          ),
+            'useDefault' => FALSE,
+            'overrides' => array(
+                array('method' => 'popup', 'minutes' => 24 * 60),
+            ),
         ),
-      ));
-      
-      $event = $service->events->insert($calendarId, $event);
+    ));
+
+    $event = $service->events->insert($calendarId, $event);
 }

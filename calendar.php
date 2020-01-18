@@ -1,6 +1,5 @@
 <?php
 require __DIR__ . '/vendor/autoload.php';
-include __DIR__ . '/config.php';
 
 if (php_sapi_name() != 'cli') {
     throw new Exception('This application must be run on the command line.');
@@ -13,16 +12,16 @@ if (php_sapi_name() != 'cli') {
 
 function getClient()
 {
-    global $secretName;
-    
+    include __DIR__ . '/config.php';
+
     $client = new Google_Client();
     $client->setApplicationName('Classeviva Sync');
     $client->setScopes(Google_Service_Calendar::CALENDAR);
-    $client->setAuthConfig(__DIR__ . '/' . $secretName);
+    $client->setAuthConfig($secretName);
     $client->setAccessType('offline');
     $client->setPrompt('select_account consent');
 
-    $tokenPath = __DIR__ . '/token.json';
+    $tokenPath = dirname(__FILE__).'/token.json';
     if (file_exists($tokenPath)) {
         $accessToken = json_decode(file_get_contents($tokenPath), true);
         $client->setAccessToken($accessToken);

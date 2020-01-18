@@ -11,7 +11,7 @@ if ($classevivaIdentity == '') {
 $session = new Classeviva($classevivaUsername, $classevivaPassword, $classevivaIdentity);
 
 // Gets today's day of the month
-$today = strval(date('d')+1); 
+$today = strval(date('d')+1);
 if(strlen($today) < 2) {    // If it's just one number (eg. 3) it adds a 0 (so it's 03)
     $today = '0'.$today;
 }
@@ -31,8 +31,11 @@ unset($agenda, $startDate, $endDate);
 try {
     $googleCalendar = getEvents($calendarId, date('c'));
 } catch (\InvalidArgumentException $th) {
-    die('You forgot the client secret file!'.PHP_EOL);
+    die('You forgot the client_secret.json file!');
 }
+
+print($calendarId.PHP_EOL);
+print_r($googleCalendar);
 
 if (!empty($googleCalendar)) {
     foreach ($events as $event) {
@@ -40,7 +43,7 @@ if (!empty($googleCalendar)) {
         if (!in_array($name, $googleCalendar)) {
             addEvent($calendarId, $name, $event->evtDatetimeBegin, $event->evtDatetimeEnd);
         }
-        
+
     }
 } else {
     foreach ($events as $event) {

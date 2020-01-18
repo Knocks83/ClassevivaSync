@@ -7,5 +7,5 @@ $classevivaIdentity = '';               /* If you login via email and you have m
                                             account you want to check*/
 
 // Google Calendar
-$secretName = 'client_secret.json';     // The client secret file name
+$secretName = dirname(__FILE__).'/client_secret.json';     // The client secret file name
 $calendarId = 'primary';                // The calendar ID (NOT THE NAME!) (default: primary)

@@ -78,11 +78,7 @@ function getEvents($calendarId, $timeMin)
     if (empty($events)) {
         return null;
     } else {
-        $evt_sum = [];
-        foreach ($events as $event) {
-            array_push($evt_sum, $event->getSummary());
-        }
-        return ($evt_sum);
+        return ($events);
     }
 }
 
@@ -113,4 +109,12 @@ function addEvent($calendarId, $summary, $start_date, $end_date)
     ));
 
     $event = $service->events->insert($calendarId, $event);
+}
+
+function delEvent($calendarId, $eventId)
+{
+    $client = getClient();
+    $service = new Google_Service_Calendar($client);
+
+    $service->events->delete($calendarId, $eventId);
 }

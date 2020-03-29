@@ -1,4 +1,7 @@
 <?php
+// Working mode
+$strict = false;                        // Whether to delete the events not in Classeviva Agenda
+
 // Classeviva
 $classevivaUsername = '';               // Classeviva login name (can be a email or a username)
 $classevivaPassword = '';               // Classeviva login password

@@ -36,6 +36,7 @@ composer install
 
 ### Set config file (`config.php`)
 
+* (Optional) Set working mode (whether to delete events that aren't in the Classeviva Calendar)
 * Set classeviva Username/email and password
 * (Optional) If you login via email and you have more than one accounts linked to the same email you must set a identity 
 (the username of the account you want to use)

@@ -34,19 +34,49 @@ try {
     die('You forgot the client secret file!' . PHP_EOL);
 }
 
-print($calendarId . PHP_EOL);
-print_r($googleCalendar);
+// Google events summary array to check the classevivaEvents.
+$gEvents = array();
+foreach ($googleCalendar as $event) {
+    $gEvents[] = $event->getSummary();
+}
 
-if (!empty($googleCalendar)) {
+print($calendarId . PHP_EOL);
+print_r($gEvents);
+print_r($events);
+
+
+if (!empty($events)) {
+    // If there are elements in the Classeviva Agenda check whether to add them.
     foreach ($events as $event) {
         $name = $event->authorName . ': ' . $event->notes;
-        if (!in_array($name, $googleCalendar)) {
+
+        if (!in_array($name, $gEvents)) {
             addEvent($calendarId, $name, $event->evtDatetimeBegin, $event->evtDatetimeEnd);
         }
     }
+
+    if ($strict) {
+        // If the strict mode is enabled, proceed to check whether the events in the
+        // Google Calendar are really Classeviva Events
+        $cEvents = array();
+        foreach ($events as $event) {
+            $cEvents[] = $event->authorName . ': ' . $event->notes;
+        }
+
+        foreach ($gEvents as $i => $event) {
+            if (!in_array($event, $cEvents)) {
+                delEvent($calendarId, $googleCalendar[$i]->getId());
+            }
+        }
+    }
 } else {
-    foreach ($events as $event) {
-        $name = $event->authorName . ': ' . $event->notes;
-        addEvent($calendarId, $name, $event->evtDatetimeBegin, $event->evtDatetimeEnd);
+    if ($strict) {
+        // If there aren't elements in the Classeviva Agenda and the Strict Mode is enabled,
+        // delete the elements that are in Google Calendar.
+        if (!empty($gEvents)) {
+            foreach ($gEvents as $i => $event) {
+                delEvent($calendarId, $googleCalendar[$i]->getId());
+            }
+        }
     }
 }

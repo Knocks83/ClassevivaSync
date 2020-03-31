@@ -11,7 +11,7 @@ if ($classevivaIdentity == '') {
 $session = new Classeviva($classevivaUsername, $classevivaPassword, $classevivaIdentity);
 
 // Gets today's day of the month
-$today = strval(date('d') + 1);
+$today = strval(date('d'));
 if (strlen($today) < 2) {    // If it's just one number (eg. 3) it adds a 0 (so it's 03)
     $today = '0' . $today;
 }
@@ -29,7 +29,7 @@ $events = $session->convertClassevivaAgenda($agenda);
 unset($agenda, $startDate, $endDate);
 
 try {
-    $googleCalendar = getEvents($calendarId, date('c'));
+    $googleCalendar = getEvents($calendarId, date('Y-m-d\TH:i:sP', strtotime('today midnight')));
 } catch (\InvalidArgumentException $th) {
     die('You forgot the client secret file!' . PHP_EOL);
 }
@@ -40,9 +40,6 @@ foreach ($googleCalendar as $event) {
     $gEvents[] = $event->getSummary();
 }
 
-print($calendarId . PHP_EOL);
-print_r($gEvents);
-print_r($events);
 
 
 if (!empty($events)) {
@@ -51,6 +48,8 @@ if (!empty($events)) {
         $name = $event->authorName . ': ' . $event->notes;
 
         if (!in_array($name, $gEvents)) {
+            //print('+'.$name.PHP_EOL);
+            //print("$calendarId, $name, $event->evtDatetimeBegin, $event->evtDatetimeEnd".PHP_EOL);
             addEvent($calendarId, $name, $event->evtDatetimeBegin, $event->evtDatetimeEnd);
         }
     }
@@ -65,6 +64,7 @@ if (!empty($events)) {
 
         foreach ($gEvents as $i => $event) {
             if (!in_array($event, $cEvents)) {
+                //print('-'.$name.PHP_EOL);
                 delEvent($calendarId, $googleCalendar[$i]->getId());
             }
         }
@@ -75,6 +75,7 @@ if (!empty($events)) {
         // delete the elements that are in Google Calendar.
         if (!empty($gEvents)) {
             foreach ($gEvents as $i => $event) {
+                //print('----'.$name.PHP_EOL);
                 delEvent($calendarId, $googleCalendar[$i]->getId());
             }
         }

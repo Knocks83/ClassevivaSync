@@ -185,7 +185,7 @@ class Classeviva
         return $this->Request("/students/$this->id/subjects");
     }
 
-    public static function convertClassevivaAgenda(string $classevivaAgenda)
+    public static function convertClassevivaAgenda($classevivaAgenda)
     {
         if (is_null($classevivaAgenda)) {
             throw new Exception('Error converting classevivaAgenda', 9);

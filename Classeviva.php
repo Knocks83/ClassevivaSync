@@ -51,6 +51,9 @@ class Classeviva
             \"uid\":\"$this->username\"
         }";
         $response = json_decode($this->Request('/auth/login', $json));
+        if (!$response) {
+            throw new Exception("Error while parsing the response", 9);
+        }
 
         if (!property_exists($response, 'error') && isset($response->token)) {
             $this->ident = $response->ident;
@@ -184,7 +187,10 @@ class Classeviva
 
     public static function convertClassevivaAgenda(string $classevivaAgenda)
     {
-        $classevivaAgenda = json_decode($classevivaAgenda);
+        if (is_null($classevivaAgenda)) {
+            throw new Exception('Error converting classevivaAgenda', 9);
+        }
+
         $classevivaEvents = array();
 
         foreach ($classevivaAgenda->agenda as $event) {

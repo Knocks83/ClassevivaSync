@@ -1,6 +1,9 @@
 <?php
 // Working mode
-$strict = false;                        // Whether to delete the events not in Classeviva Agenda
+$strict = false;                                // Whether to delete the events not in Classeviva Agenda
+$logPath = dirname(__FILE__) . '/log.txt';      // Path for the log file (default: dirname(__FILE__) . '/log.txt')
+$debugPath = null;                              /* If set to a path different from null, enables debugging to that file
+                                                    suggested: dirname(__FILE__) . '/debug.txt', default: null*/
 
 // Classeviva
 $classevivaUsername = '';               // Classeviva login name (can be a email or a username)

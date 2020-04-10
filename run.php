@@ -7,17 +7,13 @@ if ($classevivaIdentity == '') {
     $classevivaIdentity = null;
 }
 
+file_put_contents($logPath, date('c') . PHP_EOL, FILE_APPEND);
+
 // Create a Classeviva object and login
 try {
     $session = new Classeviva($classevivaUsername, $classevivaPassword, $classevivaIdentity);
 } catch (Exception $e) {
-    try {
-        $logFile = fopen($logPath, 'w+');
-        fwrite($logFile, date('c') . PHP_EOL . 'There was an error with Classeviva!');
-        fclose($logFile);
-    } finally {
-        die('There was an error with both classeviva and the log file!');
-    }
+    file_put_contents($logPath, 'There was an error with Classeviva!' . PHP_EOL, FILE_APPEND);
 }
 
 // Gets today's day of the month
@@ -58,7 +54,7 @@ foreach ($googleCalendar as $event) {
 
 // Generate debug infos
 if ($debugPath != null) {
-    $toWrite = date('c')."$calendarId\n
+    $toWrite = date('c') . "$calendarId\n
     classeviva\n
     " . print_r($events, true) . "
     Google\n
@@ -71,7 +67,6 @@ if ($debugPath != null) {
 
 
 if (!empty($events)) {
-    file_put_contents($logPath, date('c'), FILE_APPEND);
     // If there are elements in the Classeviva Agenda check whether to add them.
     foreach ($events as $event) {
         $name = $event->authorName . ': ' . $event->notes;
@@ -99,7 +94,6 @@ if (!empty($events)) {
     }
 } else {
     if ($strict) {
-        file_put_contents($logPath, date('c'), FILE_APPEND);
         // If there aren't elements in the Classeviva Agenda and the Strict Mode is enabled,
         // delete the elements that are in Google Calendar.
         if (!empty($gEvents)) {

@@ -14,6 +14,7 @@ try {
     $session = new Classeviva($classevivaUsername, $classevivaPassword, $classevivaIdentity);
 } catch (Exception $e) {
     file_put_contents($logPath, 'There was an error with Classeviva!' . PHP_EOL, FILE_APPEND);
+    die($e->getMessage());
 }
 
 // Gets today's day of the month

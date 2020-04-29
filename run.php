@@ -68,15 +68,6 @@ if ($debugPath != null) {
 
 
 if (!empty($events)) {
-    // If there are elements in the Classeviva Agenda check whether to add them.
-    foreach ($events as $event) {
-        $name = $event->authorName . ': ' . $event->notes;
-
-        if (!in_array($name, $gEvents)) {
-            file_put_contents($logPath, '+' . $name . PHP_EOL, FILE_APPEND);
-            addEvent($calendarId, $name, $event->evtDatetimeBegin, $event->evtDatetimeEnd);
-        }
-    }
 
     if ($strict) {
         // If the strict mode is enabled, proceed to check whether the events in the
@@ -88,13 +79,28 @@ if (!empty($events)) {
 
         foreach ($gEvents as $i => $event) {
             if (!in_array($event, $cEvents)) {
+                $name = $event->authorName . ': ' . $event->notes;
+
                 file_put_contents($logPath, '-' . $name . PHP_EOL, FILE_APPEND);
+                delEvent($calendarId, $googleCalendar[$i]->getId());
+            } elseif ($strict && $events[$i]->evtDatetimeBegin != $googleCalendar[$i]->getStart()->dateTime && $events[$i]->evtDatetimeEnd != $googleCalendar[$i]->getEnd()->dateTime) {
                 delEvent($calendarId, $googleCalendar[$i]->getId());
             }
         }
     }
+
+    // If there are elements in the Classeviva Agenda check whether to add them.
+    foreach ($events as $i => $event) {
+        $name = $event->authorName . ': ' . $event->notes;
+
+        if (!in_array($name, $gEvents)) {
+            file_put_contents($logPath, '+' . $name . PHP_EOL, FILE_APPEND);
+            addEvent($calendarId, $name, $event->evtDatetimeBegin, $event->evtDatetimeEnd);
+        }
+    }
+
 } else {
-    if ($strict) {
+    if ($strict && $deleteOnEmptyResponse) {
         // If there aren't elements in the Classeviva Agenda and the Strict Mode is enabled,
         // delete the elements that are in Google Calendar.
         if (!empty($gEvents)) {

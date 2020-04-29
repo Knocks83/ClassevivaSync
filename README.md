@@ -37,6 +37,7 @@ composer install
 ### Set config file (`config.php`)
 
 * (Optional) Set working mode (whether to delete events that aren't in the Classeviva Calendar)
+    * (Optional) If the strict mode is enabled, you can choose to ignore whether an empty response from Classeviva would delete every event or not (since lately Classeviva has been giving empty responses due to overload this should fix it)
 * (Optional) Change log position/Set debug log position
 * Set classeviva Username/email and password
 * (Optional) If you login via email and you have more than one accounts linked to the same email you must set a identity 

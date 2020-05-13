@@ -25,6 +25,7 @@ if (strlen($today) < 2) {    // If it's just one number (eg. 3) it adds a 0 (so 
 $startDate = date('Ym' . $today);
 unset($today);
 
+// Get the end of the scholastic year's date
 if ((int) date('m') > 8) {
     $endDate = date((date('Y') + 1) . "0831");
 } else {
@@ -34,7 +35,7 @@ if ((int) date('m') > 8) {
 // Get Classeviva Agenda and transform it in an event array
 $agenda = $session->agenda($startDate, $endDate);
 $agenda = json_decode($agenda);
-if (property_exists($agenda, 'error')) {
+if (property_exists($agenda, 'error')) {                        // If there's an error, throw it
     throw new Exception($agenda->error, $agenda->statusCode);
 }
 $events = $session->convertClassevivaAgenda($agenda);
@@ -44,7 +45,7 @@ unset($agenda, $startDate, $endDate);
 try {
     $googleCalendar = getEvents($calendarId, date('Y-m-d\TH:i:sP', strtotime('today midnight')));
 } catch (\InvalidArgumentException $th) {
-    die('You forgot the client secret file!' . PHP_EOL);
+    die('Google Error! Did you forget the client secret file?' . PHP_EOL);
 }
 
 // Google events summary array to compare with classevivaEvents.
@@ -55,14 +56,12 @@ foreach ($googleCalendar as $event) {
 
 // Generate debug infos
 if ($debugPath != null) {
-    $toWrite = date('c') . "$calendarId\n
+    $toWrite = date('c') . PHP_EOL . "$calendarId\n
     classeviva\n
     " . print_r($events, true) . "
     Google\n
     " . print_r($gEvents, true);
-    $debugFile = fopen($debugPath, 'w+');
-    fwrite($debugFile, $toWrite);
-    fclose($debugFile);
+    file_put_contents($debugPath, $toWrite, FILE_APPEND);
     unset($toWrite);
 }
 
@@ -83,8 +82,14 @@ if (!empty($events)) {
 
                 file_put_contents($logPath, '-' . $name . PHP_EOL, FILE_APPEND);
                 delEvent($calendarId, $googleCalendar[$i]->getId());
-            } elseif ($strict && $events[$i]->evtDatetimeBegin != $googleCalendar[$i]->getStart()->dateTime && $events[$i]->evtDatetimeEnd != $googleCalendar[$i]->getEnd()->dateTime) {
-                delEvent($calendarId, $googleCalendar[$i]->getId());
+            } elseif ($strict) {
+                // Find the index of the event in the events array and use it to compare the start date and end date of the event
+                $cIndex = array_search($event, $cEvents);
+                if($events[$cIndex]->evtDatetimeBegin != $googleCalendar[$i]->getStart()->dateTime &&
+                        $events[$cIndex]->evtDatetimeEnd != $googleCalendar[$i]->getEnd()->dateTime) {
+                            // If they are different, delete them
+                    delEvent($calendarId, $googleCalendar[$i]->getId());
+                }
             }
         }
     }

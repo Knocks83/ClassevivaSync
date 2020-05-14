@@ -69,7 +69,7 @@ function getEvents($calendarId, $timeMin)
 
     // Get the Calendar events
     $optParams = array(
-        'singleEvents' => false,   // Returns once the recurring events
+        'singleEvents' => true,   // Returns once the recurring events
         'timeMin' => $timeMin,   // Doesn't get the events before today
     );
     $results = $service->events->listEvents($calendarId, $optParams);
